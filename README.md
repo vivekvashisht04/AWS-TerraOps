@@ -3,8 +3,7 @@
 ## Project Workflow
 
 <div align="center">
-    <img src="![Project Architecture Diagram](https://github.com/user-attachments/assets/e2aa0f06-bc55-419e-90d9-e8b6f5dc7e74)
-" alt="AWS TerraOps Architecture Diagram">
+    <img src="https://github.com/user-attachments/assets/e2aa0f06-bc55-419e-90d9-e8b6f5dc7e74" alt="AWS TerraOps Architecture Diagram">
 </div>
 
 ## Project Overview
