@@ -42,7 +42,11 @@ To manage Terraform state, I created an S3 bucket named **aws-tf-backend-vw-buck
 
 After completing the setup, I ran `terraform init`, `terraform plan`, and `terraform apply` to confirm the S3 bucket creation and backend configuration. Verified the `terraform.tfstate` file appeared as expected in the S3 bucket.
 
-![Initial Setup Diagram](https://github.com/user-attachments/assets/initial-setup-diagram.png)
+![Initial Setup (i)](https://github.com/user-attachments/assets/eb5c7e8f-9cd0-41c0-8bc8-93b4afad2e30)
+![Initial Setup (vi)](https://github.com/user-attachments/assets/02fdc050-a6ee-429d-aaed-18ae02d6c13f)
+![Initial Setup (xvii)](https://github.com/user-attachments/assets/14b9df22-db61-4d8a-b3fa-54807afc0b19)
+![Initial Setup (xxiii)](https://github.com/user-attachments/assets/0bb6b6f1-c67e-4042-85f7-1fed013a568b)
+
 
 
 ### 2) VPC Creation and Networking
@@ -58,7 +62,11 @@ Using references from Terraform Registry and AWS Documentation, I defined the fo
 
 After defining the configurations, I ran `terraform init`, `terraform plan`, and then `terraform apply`. I verified the resources in the AWS Console to ensure they were set up as planned.
 
-![VPC and Networking Diagram](https://github.com/user-attachments/assets/vpc-networking-diagram.png)
+![VPC Creation and Networking (iii)](https://github.com/user-attachments/assets/f5ef7d80-19c2-4ccd-bab1-310b4cb8fabc)
+![VPC Creation and Networking (vi)](https://github.com/user-attachments/assets/9b20bfcb-6311-4663-a0fd-980599ccc3f7)
+![VPC Creation and Networking (xiii)](https://github.com/user-attachments/assets/5d689308-9e5c-4ac9-8691-d5b3437591c2)
+![VPC Creation and Networking (xiv)](https://github.com/user-attachments/assets/eb7b9a69-5e98-44af-b704-bdebc34b18a9)
+
 
 
 ### 3) EC2 Instances and Auto Scaling
@@ -73,7 +81,12 @@ Following Terraform Registry and AWS Documentation, I defined the following:
 
 After defining these, I ran `terraform init`, `terraform plan`, and `terraform apply`. I verified the setup by connecting to an EC2 instance and confirming Nginx was running. The ASG and instances were confirmed to be created as expected in the AWS Console.
 
-![EC2 and Auto Scaling Diagram](https://github.com/user-attachments/assets/ec2-autoscaling-diagram.png)
+![EC2 Instances and Auto Scaling (xii)](https://github.com/user-attachments/assets/aa58ede1-dff6-4b56-a070-f239b9adbcc9)
+![EC2 Instances and Auto Scaling (xix)](https://github.com/user-attachments/assets/5d1b0aba-8dbb-49aa-bec3-bc79c6ff8d61)
+![EC2 Instances and Auto Scaling (xvii)](https://github.com/user-attachments/assets/b5c3ddb1-d44d-4dbb-bd0e-49c8eb1d4989)
+![EC2 Instances and Auto Scaling (xxxiv)](https://github.com/user-attachments/assets/8230b856-0191-4d4f-94a0-b7274772130b)
+![EC2 Instances and Auto Scaling (xxxv)](https://github.com/user-attachments/assets/9c256a3c-2b7f-40da-b44e-efe8b2142ddc)
+
 
 
 ### 4) IAM Roles and S3 Integration
@@ -88,7 +101,10 @@ In this phase, I configured IAM roles for EC2 instances to grant permissions to 
 
 I ran `terraform init`, `terraform plan`, and `terraform apply`, then verified on the AWS Console. The IAM role and instance profile were attached to the EC2 instances, and both S3 buckets were successfully created with the expected configurations.
 
-![IAM and S3 Integration Diagram](https://github.com/user-attachments/assets/iam-s3-integration-diagram.png)
+![IAM Roles and S3 Integration (xiii)](https://github.com/user-attachments/assets/fea3799c-06f5-4d9e-8613-d9b6e09ecf76)
+![IAM Roles and S3 Integration (xiv)](https://github.com/user-attachments/assets/25f657c7-79ce-4dbf-8e37-c7187ab6fef5)
+![IAM Roles and S3 Integration (xvii)](https://github.com/user-attachments/assets/e607c640-6674-40b8-99d0-9f5131d0cd49)
+
 
 
 ### 5) Multi-Region Deployment and Failover
@@ -115,7 +131,10 @@ In this phase, I expanded the infrastructure to support multi-region deployment 
 
 After configuring the files, I ran `terraform init`, `terraform plan`, and `terraform apply`. All resources were verified in the AWS Console, confirming multi-region setup with active failover capability between **us-east-1** and **us-west-2**.
 
-![Multi-Region Deployment Diagram](https://github.com/user-attachments/assets/multi-region-deployment-diagram.png)
+![Multi-Region Deployment and Failover (xxviii)](https://github.com/user-attachments/assets/c9e6eff7-50e8-409b-a54d-9ab50e48cbf6)
+![Multi-Region Deployment and Failover (xxi)](https://github.com/user-attachments/assets/b0d5379e-b8e4-4f2b-9fba-e73975be2727)
+![Multi-Region Deployment and Failover (xxxvii)](https://github.com/user-attachments/assets/712fee81-212a-4be9-b131-ec941891e749)
+
 
 
 ### 6) Monitoring and Alerts with CloudWatch
@@ -135,7 +154,13 @@ In this phase, I configured monitoring and alerts using CloudWatch and SNS.
 
 After defining these resources, I ran `terraform init`, `terraform plan`, and `terraform apply`, then verified the configurations in the AWS Console. I received SNS subscription confirmation emails, which I successfully confirmed.
 
-![CloudWatch Monitoring Setup Diagram](https://github.com/user-attachments/assets/cloudwatch-monitoring-diagram.png)
+![Monitoring and Alerts with CloudWatch (xv)](https://github.com/user-attachments/assets/ca13cbde-4292-4f24-b401-f8f69ce4d266)
+![Monitoring and Alerts with CloudWatch (xvi)](https://github.com/user-attachments/assets/14995685-240f-47a3-82ab-d2d1c527a6ff)
+![Monitoring and Alerts with CloudWatch (xvii)](https://github.com/user-attachments/assets/5f4ad658-0412-4d68-a630-bb55a5db3cfc)
+![Monitoring and Alerts with CloudWatch (xxv)](https://github.com/user-attachments/assets/47796f70-273a-4819-b626-6c365abe33eb)
+![Monitoring and Alerts with CloudWatch (xxvi)](https://github.com/user-attachments/assets/f1761215-788f-49a6-97b4-2dd899f8224d)
+![Monitoring and Alerts with CloudWatch (xxvii)](https://github.com/user-attachments/assets/36b63925-52b0-4166-9e40-5338abec7684)
+
 
 
 ### 7) Parameterization and Validation
@@ -154,7 +179,9 @@ In this phase, I enhanced the flexibility of the Terraform configurations by int
 
 After these changes, I ran `terraform init`, `terraform plan`, and `terraform apply` to verify the configurations. No changes were detected, confirming the successful application of parameterization.
 
-![Parameterization Diagram](https://github.com/user-attachments/assets/parameterization-diagram.png)
+![Parameterization and Validation (i)](https://github.com/user-attachments/assets/2cda9129-c2cc-4675-be1e-587c98803ec5)
+![Parameterization and Validation (xv)](https://github.com/user-attachments/assets/2e091463-33cc-47f2-ba82-683cce6fafe2)
+
 
 
 ### 8) Testing
@@ -209,6 +236,11 @@ Browser Testing: To further verify, I accessed each ALB URL in my local browser 
 This completed the ALB testing phase successfully.
 
 
+![Application Load Balancer (ALB) Testing (vii)](https://github.com/user-attachments/assets/0abf7d0f-c451-4ed2-ba4f-e39abc00126a)
+![Application Load Balancer (ALB) Testing (viii)](https://github.com/user-attachments/assets/d7287573-cd2d-4562-b0d8-00a6aa0e7956)
+
+
+
 2) **Route 53 Failover Testing**
 
 
@@ -234,6 +266,12 @@ After defining the configurations, I ran `terraform destroy` on existing Route 5
 3. **Primary Restoration**: Restarted instances in `us-east-1`, re-ran `curl` commands, and verified that traffic reverted to the primary region.
 
 This completed and validated the Route 53 failover testing.
+
+![Route 53 Failover Testing (v)](https://github.com/user-attachments/assets/0bc4d536-7350-4dc8-9478-c13753511968)
+![Route 53 Failover Testing (viii)](https://github.com/user-attachments/assets/e131da45-50fa-4202-9438-bbcf1565801d)
+![Route 53 Failover Testing (xvi)](https://github.com/user-attachments/assets/58b61d1d-6265-45e2-a9db-706b4f905ab6)
+![Route 53 Failover Testing (xix)](https://github.com/user-attachments/assets/ac353b33-38d5-4345-b8c6-ff330d501f55)
+
 
 
 3) **Auto Scaling Group (ASG) Validation**
@@ -272,6 +310,14 @@ Next, I stopped the stress test, allowing CPU utilization to drop below 30%, act
 "Terminating EC2 instance due to alarm ScaleDownCPUUtilizationAlarm. Desired capacity decreased from 2 to 1."
 
 The newly created instance was successfully terminated, completing the scale-down test.
+
+![Auto Scaling Group (ASG) Validation (ii)](https://github.com/user-attachments/assets/a6d1441b-219c-481d-ba73-f8d88810e394)
+![Auto Scaling Group (ASG) Validation (iii)](https://github.com/user-attachments/assets/d8ca9364-3262-4ce9-ac62-a5357288cdfd)
+![Auto Scaling Group (ASG) Validation (viii)](https://github.com/user-attachments/assets/f01f619d-93f2-4d2c-baf5-00300d5d83df)
+![Auto Scaling Group (ASG) Validation (x)](https://github.com/user-attachments/assets/4dc782a8-5828-4933-9303-3a60b68296bf)
+![Auto Scaling Group (ASG) Validation (xv)](https://github.com/user-attachments/assets/e4617b6a-6a0e-40c6-9b35-b5852a409ffc)
+![Auto Scaling Group (ASG) Validation (xx)](https://github.com/user-attachments/assets/98fd456f-dfec-46cd-86c2-5b36f3fc4a16)
+
 
 
 4) **CloudWatch Alarms and Notifications Testing**
@@ -316,6 +362,11 @@ The successful receipt of this email confirmed that CloudWatch SNS notifications
 This completed the testing for CloudWatch alarms and notifications.
 
 
+![CloudWatch Alarms and Notifications Testing (iv)](https://github.com/user-attachments/assets/7ff8acc2-0da0-423e-81fc-5c724e7216de)
+![CloudWatch Alarms and Notifications Testing (v)](https://github.com/user-attachments/assets/09aea099-9687-4d6d-a11e-18f62d7258a5)
+
+
+
 ### 9) Cleanup
 
 In this final phase, the objective was to decommission all AWS resources created for the project using `terraform destroy` to avoid incurring unnecessary costs. I ensured that all resources across regions, including S3 buckets, Route 53 records, and EC2 instances, were properly removed.
@@ -357,6 +408,9 @@ The command successfully deleted all resources. The final output confirmed:
 "No changes. No objects need to be destroyed."
 
 This marked the completion of the cleanup phase, with all project resources fully decommissioned.
+
+![Cleanup (ii)](https://github.com/user-attachments/assets/649afbae-643b-4a99-a9ae-527a7b482c7b)
+
 
 
 ## Conclusion
