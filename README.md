@@ -3,7 +3,8 @@
 ## Project Workflow
 
 <div align="center">
-    <img src="https://github.com/user-attachments/assets/sample-diagram" alt="AWS TerraOps Architecture Diagram">
+    <img src="![Project Architecture Diagram](https://github.com/user-attachments/assets/e2aa0f06-bc55-419e-90d9-e8b6f5dc7e74)
+" alt="AWS TerraOps Architecture Diagram">
 </div>
 
 ## Project Overview
@@ -207,6 +208,179 @@ The responses showed that the traffic was being distributed across the two insta
 Browser Testing: To further verify, I accessed each ALB URL in my local browser and refreshed the page multiple times. I observed the instances alternating, indicating successful load balancing across all configured instances.
 
 This completed the ALB testing phase successfully.
+
+
+2) **Route 53 Failover Testing**
+
+
+In this phase, I tested Route 53 failover functionality by setting up a private Route 53 hosted zone and conducting a failover simulation.
+
+Using references from Terraform Registry and AWS Documentation, I defined the following:
+
+- **Route 53 Private Hosted Zone**: Configured `myinfra.local` as a private hosted zone, associated with both `MainVPC` in `us-east-1` and `WestVPC` in `us-west-2`.
+- **Failover Records**: Created primary and secondary failover A records for **app.myinfra.local** to route traffic to the primary and secondary ALBs in each region.
+- **Health Checks**: Configured Route 53 health checks for both the primary (us-east-1) and secondary (us-west-2) ALBs to enable automatic failover.
+
+After defining the configurations, I ran `terraform destroy` on existing Route 53 resources, followed by `terraform apply`, and verified the private hosted zone, failover records, and health checks in the AWS Console.
+
+**Failover Simulation**:
+
+1. **Initial Test**: Connected to an EC2 instance in `us-west-2` and ran `curl http://app.myinfra.local`. Results showed responses from instances in **us-east-1**, confirming traffic was routed to the primary region.
+
+2. **Failover Test**:
+   - Disabled scaling policies in the `AppASGInstance` Auto Scaling Group in `us-east-1` and detached instances.
+   - Updated desired capacity to 0 and stopped both instances in `us-east-1`.
+   - Re-ran `curl http://app.myinfra.local` from `us-west-2`, which now returned responses from **us-west-2** instances, verifying successful failover.
+
+3. **Primary Restoration**: Restarted instances in `us-east-1`, re-ran `curl` commands, and verified that traffic reverted to the primary region.
+
+This completed and validated the Route 53 failover testing.
+
+
+3) **Auto Scaling Group (ASG) Validation**
+
+
+In this testing phase, I validated the Auto Scaling Group (ASG) by configuring CPU utilization alarms to trigger scale-up and scale-down actions.
+
+Using references from Terraform Registry and AWS Documentation, I defined the following:
+
+- **Scale-Up CPU Utilization Alarm**: Configured to trigger if CPU utilization exceeds 80% for 2 evaluation periods, initiating a scale-up policy.
+- **Scale-Down CPU Utilization Alarm**: Configured to trigger if CPU utilization drops below 30% for 2 evaluation periods, initiating a scale-down policy.
+
+#### Step 1: Modify CloudWatch Alarms for Testing
+First, I removed existing high CPU utilization alarms and replaced them with specific scale-up and scale-down alarms:
+- **Scale-Up CPU Utilization Alarm**: Configured for both `us-east-1` and `us-west-2` to scale up instances when CPU utilization is above 80%.
+- **Scale-Down CPU Utilization Alarm**: Configured for both `us-east-1` and `us-west-2` to scale down instances when CPU utilization is below 30%.
+
+After defining the configurations, I ran `terraform apply`, successfully updating the ASG configuration in AWS Console.
+
+#### Step 2: Trigger Scale-Up Action
+To simulate high CPU utilization and trigger the scale-up alarm, I connected to an EC2 instance in `us-east-1` and ran the following command to stress the server:
+
+```bash
+ab -n 5000000 -c 500 http://primary-alb-1361659550.us-east-1.elb.amazonaws.com/
+```
+
+As requests processed, the ScaleUpCPUUtilizationAlarm in CloudWatch exceeded the threshold, triggering a new instance creation. I verified this log entry in AppASGInstance:
+
+"Launching a new EC2 instance due to alarm ScaleUpCPUUtilizationAlarm. Desired capacity increased from 1 to 2."
+
+A new EC2 instance was successfully launched in response to the scale-up alarm.
+
+Step 3: Trigger Scale-Down Action
+Next, I stopped the stress test, allowing CPU utilization to drop below 30%, activating the ScaleDownCPUUtilizationAlarm. This triggered a scale-down action in AppASGInstance, as reflected in the log:
+
+"Terminating EC2 instance due to alarm ScaleDownCPUUtilizationAlarm. Desired capacity decreased from 2 to 1."
+
+The newly created instance was successfully terminated, completing the scale-down test.
+
+
+4) **CloudWatch Alarms and Notifications Testing**
+
+
+In this phase, I validated the CloudWatch alarm notification functionality by testing the **ScaleUpCPUUtilizationAlarm** and verifying email notifications were received through SNS.
+
+#### Step 1: Install Stress Tool
+
+First, I connected to an EC2 instance in the us-east-1 (N. Virginia) region and installed the `stress` tool for CPU load testing:
+
+```bash
+sudo yum install stress -y
+```
+
+#### Step 2: Trigger the Scale-Up Alarm
+
+To simulate high CPU usage, I ran the following command to create CPU stress:
+
+```bash
+stress --cpu 2
+```
+
+While this command was running, I monitored the ScaleUpCPUUtilizationAlarm in the AWS CloudWatch Console. As expected, the CPU utilization rose above 80%, reaching 99.1%, which triggered the alarm.
+
+#### Step 3: Verify Notification Email
+
+After the alarm was triggered, I checked my email configured in the SNS topic and successfully received the following notification:
+
+From: AWS Notifications no-reply@sns.amazonaws.com
+Subject: CloudWatch Alarm Notification
+Message:
+You are receiving this email because your Amazon CloudWatch Alarm "ScaleUpCPUUtilizationAlarm" in the US East (N. Virginia) region has entered the ALARM state.
+Alarm Details:
+
+Name: ScaleUpCPUUtilizationAlarm
+Threshold Crossed: 2 datapoints [99.2%, 98.8%] exceeded the threshold of 80%
+Timestamp: Sunday 03 November 2024, 16:41:01 UTC
+State Change: OK -> ALARM
+The successful receipt of this email confirmed that CloudWatch SNS notifications are functioning as expected.
+
+This completed the testing for CloudWatch alarms and notifications.
+
+
+### 9) Cleanup
+
+In this final phase, the objective was to decommission all AWS resources created for the project using `terraform destroy` to avoid incurring unnecessary costs. I ensured that all resources across regions, including S3 buckets, Route 53 records, and EC2 instances, were properly removed.
+
+#### Step 1: View Destroy Plan
+
+I began by running the following command to review the destruction plan:
+
+```bash
+terraform plan -destroy
+```
+
+This showed a total of 63 resources scheduled for deletion.
+
+#### Step 2: Execute Destroy Command
+
+Next, I executed the command to initiate the cleanup:
+
+```bash
+terraform destroy -auto-approve
+```
+
+#### Step 3: Resolve S3 Bucket Deletion Issue
+
+During the process, I encountered an issue with the S3 bucket (aws-tf-backend-vv-bucket) which failed to delete due to the presence of stored files, including the terraform.tfstate file. To resolve this:
+
+I accessed the aws-tf-backend-vv-bucket in the AWS S3 console.
+Manually deleted the contents of the bucket.
+After clearing the bucket, I re-ran the destroy command:
+
+```bash
+terraform destroy -auto-approve
+```
+
+#### Step 4: Verify Deletion
+
+The command successfully deleted all resources. The final output confirmed:
+
+"No changes. No objects need to be destroyed."
+
+This marked the completion of the cleanup phase, with all project resources fully decommissioned.
+
+
+## Conclusion
+The **AWS TerraOps** project successfully demonstrated expertise in infrastructure automation, high availability, and scalability using AWS services. By designing, deploying, and testing a multi-region infrastructure with auto-scaling, load balancing, and failover mechanisms, this project showcased comprehensive skills in AWS resource management, infrastructure-as-code (IaC) principles, and automated monitoring and alerting.
+
+## Skills Demonstrated
+- **Infrastructure Automation:** Automated the creation and management of AWS resources using Terraform, ensuring consistency and scalability.
+- **High Availability and Scalability:** Implemented multi-region load balancing and auto-scaling to ensure resilience and fault tolerance.
+- **Failover and Disaster Recovery:** Configured Route 53 with failover routing policies for seamless failover between primary and secondary regions.
+- **Monitoring and Alerting:** Set up CloudWatch for real-time monitoring, custom alarms, and notifications for proactive infrastructure management.
+- **Security Best Practices:** Utilized IAM roles and policies, VPC configurations, and S3 access restrictions to establish a secure infrastructure environment.
+
+## Repository Contents
+- **Manual:** A detailed manual documenting each phase of the project, including configurations, testing procedures, and troubleshooting steps.
+- **Screenshots:** Visual documentation of key configurations and stages, providing a clear, step-by-step reference guide.
+- **Source Code:** All Terraform configuration files and scripts used in this project, organized in the `Source_Code` folder.
+
+## Contact
+For any questions or further information, feel free to reach out to me on LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/vivek-vashisht04/)
+
+
+
+
 
 
 
